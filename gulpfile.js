@@ -4,6 +4,7 @@ var livereload = require('gulp-livereload');
 var concat = require('gulp-concat');
 var minify = require('gulp-clean-css');
 var autoprefixer = require('gulp-autoprefixer');
+var plumber = require('gulp-plumber');
 
 // file paths
 var DIST_PATH = 'public/dist';
@@ -14,6 +15,11 @@ var STYLES_PATH = 'public/styles/**/*.css';
 gulp.task('styles', function() {
   console.log('starting styles task');
   return gulp.src(['public/styles/reset.css', STYLES_PATH])
+    .pipe(plumber(function(err) {
+      console.log('styles task error');
+      console.log(err);
+      this.emit('end'); // internal gulp method that tells gulp to stop running the rest of the process but still keeps the gulp up
+    }))
     .pipe(autoprefixer())
     .pipe(concat('styles.css'))
     .pipe(minify())
