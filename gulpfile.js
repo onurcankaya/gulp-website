@@ -1,7 +1,7 @@
 var gulp = require('gulp');
 var uglify = require('gulp-uglify');
 var livereload = require('gulp-livereload');
-// var concat = require('gulp-concat');
+var concat = require('gulp-concat');
 // var minify = require('gulp-clean-css');
 var autoprefixer = require('gulp-autoprefixer');
 var plumber = require('gulp-plumber');
@@ -36,7 +36,7 @@ gulp.task('styles', function() {
   console.log('starting styles task');
   return gulp.src('public/scss/styles.scss')
     .pipe(plumber(function(err) {
-      console.log('styles task error');
+      console.log('STYLES TASK ERROR');
       console.log(err);
       this.emit('end'); // internal gulp method that tells gulp to stop running the rest of the process but still keeps the gulp up
     }))
@@ -55,7 +55,15 @@ gulp.task('scripts', function() {
   console.log('starting scripts task');
 
   return gulp.src(SCRIPTS_PATH)
+    .pipe(plumber(function (err) {
+      console.log('SCRIPTS TASK ERROR');
+      console.log(err);
+      this.emit('end');
+    }))
+    .pipe(sourcemaps.init())
     .pipe(uglify())
+    .pipe(concat('scripts.js'))
+    .pipe(sourcemaps.write())
     .pipe(gulp.dest(DIST_PATH))
     .pipe(livereload());
 });
